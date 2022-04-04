@@ -1,0 +1,68 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="card">
+    <h5 class="card-header">
+        AUTOCOMPLETE
+    </h5>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="mb-3">
+                    <label for="inputCar" class="form-label">Buscar Carro</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="txtSearch">
+                        <span class="input-group-text" id="basic-addon2"><i class="bi bi-search"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-bordered" id="tblCars">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Marca</th>
+                            <th scope="col">Modelo</th>
+                            <th scope="col">Año</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{ 
+    <script>
+        $(document).ready(function () {
+            //esta funcion se ejecutara hasta que se hayan cargado los objetos en el DOM
+            $("#txtSearch").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "@Url.Action("SearchCar", "Home")?search=" + request.term,
+                        dataType: "json",
+                        success: function (data) {
+                            response(data)
+                        }
+                    })
+                },
+                select: function (event, item) {
+                    console.log(item)
+                    $("#tblCars tbody").append(
+                        $("<tr>").append(
+                            $("<td>").text(item.item.car_make),
+                            $("<td>").text(item.item.car_model),
+                            $("<td>").text(item.item.car_model_year)
+                        )
+                    )
+                    event.preventDefault();
+                    $(this).val("");
+                }
+            })
+        })
+    </script>
+}
